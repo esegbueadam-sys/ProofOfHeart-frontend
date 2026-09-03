@@ -291,9 +291,10 @@ export function createRateLimiterMiddleware(
   return {
     name: 'rate-limiter',
     async onRequest(req: PreparedRequest): Promise<PreparedRequest> {
-      const delayMs = await limiter.acquire(req.signal);
-      if (delayMs > 0) await sleep(delayMs, req.signal);
-      if (req.signal?.aborted) throw abortError('The rate-limit wait was aborted.');
+      const signal = (req as any).signal as AbortSignal | undefined;
+      const delayMs = await limiter.acquire(signal);
+      if (delayMs > 0) await sleep(delayMs, signal);
+      if (signal?.aborted) throw abortError('The rate-limit wait was aborted.');
       return {
         ...req,
         headers: {

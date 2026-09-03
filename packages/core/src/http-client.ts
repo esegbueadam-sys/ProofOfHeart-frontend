@@ -1,6 +1,7 @@
+export const SDK_VERSION = '1.0.0';
 import { AstroidTimeoutError } from './timeout-error.js';
 import type { HttpClientOptions, HttpRequestOptions, HttpResponse } from './http-types.js';
-import { combineUrl } from './url.js';
+import { combineUrl, buildQueryString } from './url.js';
 
 export class HttpClient {
   private baseUrl: string;
@@ -16,8 +17,12 @@ export class HttpClient {
   }
 
   public async request<T = unknown>(options: HttpRequestOptions): Promise<HttpResponse<T>> {
-    const url = combineUrl(this.baseUrl, options.path);
-    const method = options.method;
+    const path = options.path ?? '';
+    const rawUrl = combineUrl(this.baseUrl, path);
+    const queryStr = buildQueryString(options.query ?? options.params);
+    const url = queryStr ? `${rawUrl}${queryStr}` : rawUrl;
+
+    const method = options.method ?? 'GET';
     const headers = {
       ...this.defaultHeaders,
       ...options.headers,
@@ -46,7 +51,7 @@ export class HttpClient {
     }
 
     const timer = setTimeout(() => {
-      controller.abort(new AstroidTimeoutError(`Request timed out after ${timeout}ms`, { timeout }));
+      controller.abort(new AstroidTimeoutError(timeout));
     }, timeout);
 
     try {
@@ -73,6 +78,7 @@ export class HttpClient {
         status: response.status,
         headers: response.headers,
         body: responseBody as T,
+        data: responseBody as T,
         requestId,
       };
     } catch (error: any) {
@@ -82,7 +88,7 @@ export class HttpClient {
         if (reason instanceof AstroidTimeoutError) {
           throw reason;
         }
-        throw new AstroidTimeoutError(error?.message || 'Request was aborted or timed out', { timeout });
+        throw new AstroidTimeoutError(timeout);
       }
       throw error;
     }

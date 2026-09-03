@@ -11,8 +11,8 @@ export function createErrorParserMiddleware(): Middleware {
     name: 'astroid-error-parser',
     onResponse(res, req) {
       if (res.status >= 400) {
-        pendingBodies.set(bodyKey(req), res.body);
-        const detected = detectStellarCode(res.body);
+        pendingBodies.set(bodyKey(req), res.data);
+        const detected = detectStellarCode(res.data);
         if (detected) {
           req.options.context = { ...req.options.context, _stellarCode: detected.stellarCode };
         }

@@ -42,3 +42,11 @@ export function buildUrl(
   const versionSegment = cleanVersion ? `/${cleanVersion}` : '';
   return `${cleanBase}${versionSegment}${cleanPath}${buildQueryString(query)}`;
 }
+
+/**
+ * Combines a base URL and relative URL cleanly without trailing/leading slashes overlap.
+ */
+export function combineUrl(baseUrl: string, relativeUrl?: string): string {
+  if (!relativeUrl) return baseUrl;
+  return `${baseUrl.replace(/\/+$/, '')}/${relativeUrl.replace(/^\/+/, '')}`;
+}

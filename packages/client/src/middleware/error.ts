@@ -313,7 +313,7 @@ export function createErrorTranslatorMiddleware(): Middleware {
       // Let the client's 401 refresh handler and retry loop run first
       if (res.status === 401) return;
       if (isRetryableStatus(res.status)) return;
-      const translated = translateErrorBody(res.status, res.body, res.requestId);
+      const translated = translateErrorBody(res.status, res.data ?? (res as any).body, res.requestId);
       if (translated) throw translated;
       // No translation — pass through to HttpClient's default handling
     },
