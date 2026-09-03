@@ -1,8 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+**/node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,17 +11,20 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-/test-results
-/playwright-report
+# build & production outputs (monorepo wide)
+dist/
+**/dist/
+build/
+**/build/
+.next/
+out/
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# testing & coverage (monorepo wide)
+coverage/
+**/coverage/
+test-results/
+**/test-results/
+playwright-report/
 
 # misc
 .DS_Store
@@ -32,14 +36,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 !.env.example
 
 # vercel
 .vercel
 
-# typescript
+# typescript & docs
 *.tsbuildinfo
 next-env.d.ts
 fix.md
@@ -47,8 +51,8 @@ pr.md
 PR_CONTENT.md
 PR_DESCRIPTION_*.md
 .codex
-# bundle-size CI artefact
+
+# CI artefacts
 bundle-size-summary.json
-# npm audit artefacts
 npm-audit-report.json
 npm-audit-temp.json
